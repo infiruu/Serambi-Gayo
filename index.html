@@ -40,8 +40,8 @@
 
             <div class="categories" id="category-container">
                 <button class="cat-btn active" data-category="all">Semua</button>
-                <button class="cat-btn" data-category="specialty">Specialty Coffee</button>
-                <button class="cat-btn" data-category="milky">Milky Series</button>
+                <button class="cat-btn" data-category="espresso">Espresso Based</button>
+                <button class="cat-btn" data-category="manual">Manual Brew</button>
                 <button class="cat-btn" data-category="snack">Cemilan</button>
                 <button class="cat-btn" data-category="food">Makanan Berat</button>
             </div>
@@ -111,6 +111,26 @@
                 </div>
                 
                 <button class="confirm-pay-btn" id="confirm-brew-btn" disabled>Tambahkan ke Pesanan</button>
+            </div>
+        </div>
+
+        <!-- Espresso Add-on Modal -->
+        <div class="modal-overlay hidden" id="espresso-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Pilih Tambahan (Opsional)</h2>
+                    <button class="close-btn" id="close-espresso-modal"><i class="ri-close-line"></i></button>
+                </div>
+                <h3 class="modal-total" style="font-size: 1.2rem; margin-bottom: 20px;" id="espresso-menu-name">Menu Espresso</h3>
+                
+                <div class="payment-methods">
+                    <button class="pay-method-btn" id="btn-no-addon">
+                        <span>Tanpa Tambahan (Normal)</span> <span style="margin-left:auto; color:var(--text-muted);">+Rp 0</span>
+                    </button>
+                    <button class="pay-method-btn" id="btn-with-oatmilk">
+                        <span>Ganti Oatmilk</span> <span style="margin-left:auto; color:var(--primary-color);">+Rp 15.000</span>
+                    </button>
+                </div>
             </div>
         </div>
 

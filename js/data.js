@@ -1,19 +1,17 @@
 const products = [
-    // Specialty Coffee (Base Beans)
-    { id: 'b1', name: 'Gayo Classic (Washed/Natural)', category: 'specialty', requiresBrew: true, price: 25000, img: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=300&q=80' },
-    { id: 'b2', name: 'Gayo Honey (Yellow/Red)', category: 'specialty', requiresBrew: true, price: 30000, img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=300&q=80' },
-    { id: 'b3', name: 'Gayo Wine (Long Fermentation)', category: 'specialty', requiresBrew: true, price: 40000, img: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=300&q=80' },
-    { id: 'b4', name: 'Toraja Sapan', category: 'specialty', requiresBrew: true, price: 30000, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&q=80' },
-    { id: 'b5', name: 'Flores Bajawa', category: 'specialty', requiresBrew: true, price: 28000, img: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=300&q=80' },
-    { id: 'b6', name: 'Bali Kintamani', category: 'specialty', requiresBrew: true, price: 32000, img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=300&q=80' },
-    { id: 'b7', name: 'Jawa Preanger', category: 'specialty', requiresBrew: true, price: 30000, img: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=300&q=80' },
-    { id: 'b8', name: 'Papua Wamena', category: 'specialty', requiresBrew: true, price: 35000, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&q=80' },
+    // Manual Brew (Base Beans)
+    { id: 'b1', name: 'Gayo Classic', category: 'manual', requiresBrew: true, price: 25000, img: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=300&q=80' },
+    { id: 'b2', name: 'Gayo Honey', category: 'manual', requiresBrew: true, price: 30000, img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=300&q=80' },
+    { id: 'b3', name: 'Gayo Wine', category: 'manual', requiresBrew: true, price: 40000, img: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=300&q=80' },
+    { id: 'b4', name: 'Toraja Sapan', category: 'manual', requiresBrew: true, price: 30000, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&q=80' },
+    { id: 'b6', name: 'Bali Kintamani', category: 'manual', requiresBrew: true, price: 32000, img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=300&q=80' },
+    { id: 'b5', name: 'Flores Bajawa', category: 'manual', requiresBrew: true, price: 28000, img: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=300&q=80' },
 
-    // Milky Series
-    { id: 'm1', name: 'Kopi Susu Gula Aren', category: 'milky', price: 28000, img: 'https://images.unsplash.com/photo-1550974868-6c84c7e6c935?w=300&q=80' },
-    { id: 'm2', name: 'Caramel Macchiato', category: 'milky', price: 35000, img: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=300&q=80' },
-    { id: 'm3', name: 'Matcha Latte Espresso', category: 'milky', price: 38000, img: 'https://images.unsplash.com/photo-1536514072410-5019a3c69182?w=300&q=80' },
-    { id: 'm4', name: 'Hazelnut Latte', category: 'milky', price: 35000, img: 'https://images.unsplash.com/photo-1572442388741-ee7c10b27af8?w=300&q=80' },
+    // Espresso Based
+    { id: 'e1', name: 'Espresso (Double Shot)', category: 'espresso', requiresEspressoAddon: true, price: 25000, img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&q=80' },
+    { id: 'e2', name: 'Americano / Long Black', category: 'espresso', requiresEspressoAddon: true, price: 32000, img: 'https://images.unsplash.com/photo-1550974868-6c84c7e6c935?w=300&q=80' },
+    { id: 'e3', name: 'Cafe Latte / Cappuccino', category: 'espresso', requiresEspressoAddon: true, price: 38000, img: 'https://images.unsplash.com/photo-1536514072410-5019a3c69182?w=300&q=80' },
+    { id: 'e4', name: 'Flat White', category: 'espresso', requiresEspressoAddon: true, price: 38000, img: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=300&q=80' },
 
     // Cemilan
     { id: 's1', name: 'Kentang Goreng', category: 'snack', price: 20000, img: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=300&q=80' },

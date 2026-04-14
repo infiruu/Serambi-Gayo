@@ -41,6 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const brewMethodsList = document.getElementById('brew-methods-list');
     const confirmBrewBtn = document.getElementById('confirm-brew-btn');
 
+    // Espresso Modal
+    const espressoModal = document.getElementById('espresso-modal');
+    const closeEspressoModalBtn = document.getElementById('close-espresso-modal');
+    const espressoMenuName = document.getElementById('espresso-menu-name');
+    const btnNoAddon = document.getElementById('btn-no-addon');
+    const btnWithOatmilk = document.getElementById('btn-with-oatmilk');
+
     const historyList = document.getElementById('history-list');
 
     let selectedPaymentMethod = null;
@@ -103,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModalBtn.addEventListener('click', () => paymentModal.classList.add('hidden'));
     btnCloseReceipt.addEventListener('click', () => receiptModal.classList.add('hidden'));
     closeBrewModalBtn.addEventListener('click', () => brewModal.classList.add('hidden'));
+    closeEspressoModalBtn.addEventListener('click', () => espressoModal.classList.add('hidden'));
 
     // Payment Methods Selection
     payMethodBtns.forEach(btn => {
@@ -171,10 +179,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleProductClick(product) {
         if (product.requiresBrew) {
             openBrewModal(product);
+        } else if (product.requiresEspressoAddon) {
+            openEspressoModal(product);
         } else {
             addToCart(product);
         }
     }
+
+    function openEspressoModal(product) {
+        activeBean = product;
+        espressoMenuName.textContent = product.name;
+        espressoModal.classList.remove('hidden');
+    }
+
+    btnNoAddon.addEventListener('click', () => {
+        if (activeBean) {
+            addToCart(activeBean);
+            espressoModal.classList.add('hidden');
+        }
+    });
+
+    btnWithOatmilk.addEventListener('click', () => {
+        if (activeBean) {
+            const combinedProduct = {
+                id: activeBean.id + '_oatmilk',
+                name: `${activeBean.name} - Ganti Oatmilk`,
+                price: activeBean.price + 15000,
+                img: activeBean.img
+            };
+            addToCart(combinedProduct);
+            espressoModal.classList.add('hidden');
+        }
+    });
 
     function openBrewModal(product) {
         activeBean = product;
