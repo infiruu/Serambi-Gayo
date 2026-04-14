@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serambi Gayo - POS System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="brand">
+                <i class="ri-cup-hot-fill"></i>
+                <h2>Serambi Gayo</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-view="pos">
+                    <i class="ri-store-2-line"></i> Kasir
+                </li>
+                <li data-view="history">
+                    <i class="ri-history-line"></i> Riwayat
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main POS Area -->
+        <main class="main-content" id="pos-view">
+            <header class="top-header">
+                <div class="search-bar">
+                    <i class="ri-search-line"></i>
+                    <input type="text" id="search-input" placeholder="Cari menu...">
+                </div>
+                <div class="date-time" id="current-time">--:--</div>
+            </header>
+
+            <div class="categories" id="category-container">
+                <button class="cat-btn active" data-category="all">Semua</button>
+                <button class="cat-btn" data-category="specialty">Specialty Coffee</button>
+                <button class="cat-btn" data-category="milky">Milky Series</button>
+                <button class="cat-btn" data-category="snack">Cemilan</button>
+                <button class="cat-btn" data-category="food">Makanan Berat</button>
+            </div>
+
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be injected here -->
+            </div>
+        </main>
+
+        <!-- Transaction History Area (Hidden by default) -->
+        <main class="main-content hidden" id="history-view">
+            <header class="top-header">
+                <h2>Riwayat Transaksi</h2>
+            </header>
+            <div class="history-list" id="history-list">
+                <!-- History logs injected here -->
+            </div>
+        </main>
+
+        <!-- Order Cart Sidebar -->
+        <aside class="cart-sidebar">
+            <h3>Pesanan Saat Ini</h3>
+            
+            <div class="order-type">
+                <button class="type-btn active">Dine In</button>
+                <button class="type-btn">Take Away</button>
+            </div>
+
+            <div class="cart-items" id="cart-items">
+                <!-- Cart empty state -->
+                <div class="empty-cart">
+                    <i class="ri-shopping-cart-2-line"></i>
+                    <p>Belum ada pesanan</p>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span id="subtotal">Rp 0</span>
+                </div>
+                <div class="summary-line">
+                    <span>Pajak (10%)</span>
+                    <span id="tax">Rp 0</span>
+                </div>
+                <div class="summary-line total">
+                    <span>Total</span>
+                    <span id="total">Rp 0</span>
+                </div>
+                <button class="checkout-btn" id="btn-checkout" disabled>
+                    Proses Pembayaran <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Brew Selection Modal -->
+        <div class="modal-overlay hidden" id="brew-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Pilih Teknik Seduh</h2>
+                    <button class="close-btn" id="close-brew-modal"><i class="ri-close-line"></i></button>
+                </div>
+                <h3 class="modal-total" style="font-size: 1.2rem; margin-bottom: 20px;" id="brew-bean-name">Nama Biji Kopi</h3>
+                
+                <div class="payment-methods" id="brew-methods-list">
+                    <!-- Brew methods injected here -->
+                </div>
+                
+                <button class="confirm-pay-btn" id="confirm-brew-btn" disabled>Tambahkan ke Pesanan</button>
+            </div>
+        </div>
+
+        <!-- Payment Modal -->
+        <div class="modal-overlay hidden" id="payment-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Pilih Metode Pembayaran</h2>
+                    <button class="close-btn" id="close-modal"><i class="ri-close-line"></i></button>
+                </div>
+                <h3 class="modal-total">Total Tagihan: <span id="modal-total-amount">Rp 0</span></h3>
+                
+                <div class="payment-methods">
+                    <button class="pay-method-btn" data-method="cash">
+                        <i class="ri-money-dollar-circle-line"></i>
+                        <span>Cash</span>
+                    </button>
+                    <button class="pay-method-btn" data-method="qris">
+                        <i class="ri-qr-code-line"></i>
+                        <span>QRIS</span>
+                    </button>
+                    <button class="pay-method-btn" data-method="transfer">
+                        <i class="ri-bank-card-line"></i>
+                        <span>Transfer Bank</span>
+                    </button>
+                </div>
+                
+                <!-- Extra field for cash amount -->
+                <div class="cash-input hidden" id="cash-input-area">
+                    <label>Uang Diterima:</label>
+                    <input type="number" id="cash-amount" placeholder="0">
+                    <p class="change-amount">Kembalian: <span id="cash-change">Rp 0</span></p>
+                </div>
+
+                <button class="confirm-pay-btn" id="confirm-payment">Konfirmasi Transaksi</button>
+            </div>
+        </div>
+        
+        <!-- Receipt Modal -->
+        <div class="modal-overlay hidden" id="receipt-modal">
+            <div class="modal-content receipt-content">
+                <div class="receipt-header">
+                    <i class="ri-checkbox-circle-fill success-icon"></i>
+                    <h2>Transaksi Berhasil!</h2>
+                    <p class="receipt-id" id="receipt-id-display">#TRX-0000</p>
+                </div>
+                <div class="receipt-body" id="receipt-body-details">
+                    <!-- Receipt details here -->
+                </div>
+                <div class="receipt-actions">
+                    <button class="secondary-btn" id="btn-close-receipt">Tutup</button>
+                    <button class="primary-btn"><i class="ri-printer-line"></i> Cetak Struk</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
