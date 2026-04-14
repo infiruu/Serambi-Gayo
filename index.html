@@ -165,6 +165,20 @@
                     <p class="change-amount">Kembalian: <span id="cash-change">Rp 0</span></p>
                 </div>
 
+                <!-- QRIS Dummy Display -->
+                <div class="qris-area hidden" id="qris-area" style="text-align: center; margin-bottom: 20px; animation: fadeIn 0.3s;">
+                    <p style="margin-bottom: 15px; color: var(--text-muted);">Silakan scan kode QRIS di bawah ini:</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Pembayaran+Serambi+Gayo" alt="QRIS Serambi Gayo" style="border-radius: 10px; border: 5px solid white;">
+                    <p style="margin-top: 15px; font-weight: 500; color: var(--primary-color);">Gunakan aplikasi M-Banking atau E-Wallet.</p>
+                </div>
+
+                <!-- Transfer Bank Dummy Display -->
+                <div class="transfer-area hidden" id="transfer-area" style="text-align: center; margin-bottom: 20px; background: var(--bg-dark); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.3s;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px;">Silakan Transfer ke Rekening BCA</p>
+                    <h3 style="font-size: 1.8rem; letter-spacing: 2px; color: var(--text-main); margin-bottom: 5px;">8219 2839 12</h3>
+                    <p style="color: var(--primary-color); font-weight: 500;">a.n. Serambi Gayo Cafe</p>
+                </div>
+
                 <button class="confirm-pay-btn" id="confirm-payment">Konfirmasi Transaksi</button>
             </div>
         </div>

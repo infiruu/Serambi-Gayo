@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cashInputArea = document.getElementById('cash-input-area');
     const cashAmountInput = document.getElementById('cash-amount');
     const cashChangeEl = document.getElementById('cash-change');
+    const qrisArea = document.getElementById('qris-area');
+    const transferArea = document.getElementById('transfer-area');
     const confirmPaymentBtn = document.getElementById('confirm-payment');
 
     const receiptModal = document.getElementById('receipt-modal');
@@ -119,11 +121,20 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('selected');
             selectedPaymentMethod = btn.getAttribute('data-method');
             
+            // Reset areas
+            cashInputArea.classList.add('hidden');
+            qrisArea.classList.add('hidden');
+            transferArea.classList.add('hidden');
+            confirmPaymentBtn.disabled = true;
+            
             if (selectedPaymentMethod === 'cash') {
                 cashInputArea.classList.remove('hidden');
                 calculateChange();
-            } else {
-                cashInputArea.classList.add('hidden');
+            } else if (selectedPaymentMethod === 'qris') {
+                qrisArea.classList.remove('hidden');
+                confirmPaymentBtn.disabled = false;
+            } else if (selectedPaymentMethod === 'transfer') {
+                transferArea.classList.remove('hidden');
                 confirmPaymentBtn.disabled = false;
             }
         });
@@ -333,6 +344,8 @@ document.addEventListener('DOMContentLoaded', () => {
         payMethodBtns.forEach(b => b.classList.remove('selected'));
         selectedPaymentMethod = null;
         cashInputArea.classList.add('hidden');
+        qrisArea.classList.add('hidden');
+        transferArea.classList.add('hidden');
         cashAmountInput.value = '';
         confirmPaymentBtn.disabled = true;
 
