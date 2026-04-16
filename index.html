@@ -25,6 +25,9 @@
                 <li data-view="history">
                     <i class="ri-history-line"></i> Riwayat
                 </li>
+                <li data-view="inventory">
+                    <i class="ri-box-3-line"></i> Inventaris
+                </li>
             </ul>
         </nav>
 
@@ -58,6 +61,42 @@
             </header>
             <div class="history-list" id="history-list">
                 <!-- History logs injected here -->
+            </div>
+        </main>
+
+        <!-- Inventory Dashboard Area (Hidden by default) -->
+        <main class="main-content hidden" id="inventory-view">
+            <header class="top-header">
+                <h2>Dashboard Inventaris</h2>
+            </header>
+            
+            <div class="inventory-dashboard">
+                <div class="inventory-stocks-section">
+                    <h3>Status Stok Biji Kopi</h3>
+                    <div class="inventory-grid" id="inventory-grid">
+                        <!-- Stock cards injected here -->
+                    </div>
+                </div>
+
+                <div class="inventory-logs-section">
+                    <h3>Log Perubahan Stok</h3>
+                    <div class="table-responsive">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Waktu</th>
+                                    <th>Jenis Biji</th>
+                                    <th>Pengurangan</th>
+                                    <th>Sisa Stok (Kg)</th>
+                                    <th>ID Transaksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-logs-body">
+                                <!-- Logs injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -202,6 +241,9 @@
         </div>
 
     </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- Scripts -->
     <script src="js/data.js"></script>

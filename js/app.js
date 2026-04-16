@@ -3,10 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let cart = [];
     let transactions = [];
     let currentCategory = 'all';
+    let inventoryLogs = [];
+    const LOW_STOCK_THRESHOLD = 100000; // 100 Kg in grams
 
     // --- DOM ELEMENTS ---
     const posView = document.getElementById('pos-view');
     const historyView = document.getElementById('history-view');
+    const inventoryView = document.getElementById('inventory-view');
     const navLinks = document.querySelectorAll('.nav-links li');
     
     const productGrid = document.getElementById('product-grid');
@@ -51,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnWithOatmilk = document.getElementById('btn-with-oatmilk');
 
     const historyList = document.getElementById('history-list');
+    
+    // Inventory Elements
+    const inventoryGrid = document.getElementById('inventory-grid');
+    const inventoryLogsBody = document.getElementById('inventory-logs-body');
+    const toastContainer = document.getElementById('toast-container');
 
     let selectedPaymentMethod = null;
     let currentTotal = 0;
@@ -71,13 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
             link.classList.add('active');
             
             const view = link.getAttribute('data-view');
+            posView.classList.add('hidden');
+            historyView.classList.add('hidden');
+            inventoryView.classList.add('hidden');
+            
             if (view === 'pos') {
                 posView.classList.remove('hidden');
-                historyView.classList.add('hidden');
-            } else {
-                posView.classList.add('hidden');
+            } else if (view === 'history') {
                 historyView.classList.remove('hidden');
                 renderHistory();
+            } else if (view === 'inventory') {
+                inventoryView.classList.remove('hidden');
+                renderInventory();
             }
         });
     });
@@ -162,16 +175,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         items.forEach(product => {
+            const isManual = product.category === 'manual';
+            const isEspresso = product.category === 'espresso';
+            let stockHtml = '';
+            let isOutOfStock = false;
+            
+            if (product.grams > 0) {
+                let beanId = isManual ? product.id : (isEspresso ? HOUSE_BLEND_ID : null);
+                if (beanId && inventoryData[beanId]) {
+                    const stockInGrams = inventoryData[beanId].stock;
+                    const stockInKg = (stockInGrams / 1000).toFixed(2);
+                    
+                    if (stockInGrams < product.grams) {
+                        isOutOfStock = true;
+                        stockHtml = `<div class="product-stock danger">Habis</div>`;
+                    } else {
+                        stockHtml = `<div class="product-stock">${stockInKg} Kg</div>`;
+                    }
+                }
+            }
+
             const card = document.createElement('div');
-            card.className = 'product-card';
+            card.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
             card.innerHTML = `
                 <div class="product-img" style="background-image: url('${product.img}')"></div>
+                ${stockHtml}
                 <div class="product-info">
                     <h4>${product.name}</h4>
                     <p class="price">${formatRupiah(product.price)}</p>
                 </div>
             `;
-            card.addEventListener('click', () => handleProductClick(product));
+            card.addEventListener('click', () => {
+                if(!isOutOfStock) handleProductClick(product);
+            });
             productGrid.appendChild(card);
         });
     }
@@ -216,7 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: activeBean.id + '_oatmilk',
                 name: `${activeBean.name} - Ganti Oatmilk`,
                 price: activeBean.price + 15000,
-                img: activeBean.img
+                img: activeBean.img,
+                grams: activeBean.grams,
+                category: activeBean.category,
+                baseId: activeBean.id
             };
             addToCart(combinedProduct);
             espressoModal.classList.add('hidden');
@@ -257,14 +296,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: activeBean.id + '_' + selectedBrewMethod.id,
                 name: `${activeBean.name} - ${selectedBrewMethod.name}`,
                 price: activeBean.price + selectedBrewMethod.price,
-                img: activeBean.img
+                img: activeBean.img,
+                grams: activeBean.grams,
+                category: activeBean.category,
+                baseId: activeBean.id
             };
             addToCart(combinedProduct);
             brewModal.classList.add('hidden');
         }
     });
 
+    // Helper finding bean mapping id for a given cart product
+    function getBeanId(item) {
+        const baseId = item.baseId || item.id;
+        const baseProduct = products.find(p => p.id === baseId);
+        if (!baseProduct) return null;
+        
+        if (baseProduct.category === 'manual') return baseId;
+        if (baseProduct.category === 'espresso') return HOUSE_BLEND_ID;
+        return null;
+    }
+
+    // Helper calculate stock checking against the cart
+    function isStockSufficient(productToAdd, qtyToAdd) {
+        const targetBeanId = getBeanId(productToAdd);
+        if (!targetBeanId) return true; // not a coffee item
+
+        const gramsPerUnit = productToAdd.grams || 0;
+        if (gramsPerUnit === 0) return true;
+
+        // Calculate total grams needed for THIS beanId currently in cart
+        let totalGramsInCart = 0;
+        cart.forEach(item => {
+            if (getBeanId(item) === targetBeanId) {
+                totalGramsInCart += (item.grams || 0) * item.qty;
+            }
+        });
+
+        const newGramsNeeded = gramsPerUnit * qtyToAdd;
+        const availableStock = inventoryData[targetBeanId].stock;
+
+        return (totalGramsInCart + newGramsNeeded) <= availableStock;
+    }
+
     function addToCart(product) {
+        if (!isStockSufficient(product, 1)) {
+            alert('Gagal menambahkan: Sisa Stok tidak mencukupi!');
+            return;
+        }
+
         const existing = cart.find(item => item.id === product.id);
         if (existing) {
             existing.qty += 1;
@@ -277,6 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateQty(id, delta) {
         const item = cart.find(i => i.id === id);
         if (item) {
+            // Check stock if increasing qty
+            if (delta > 0 && !isStockSufficient(item, 1)) {
+                alert('Gagal menambah: Sisa Stok tidak mencukupi!');
+                return;
+            }
+
             item.qty += delta;
             if (item.qty <= 0) {
                 cart = cart.filter(i => i.id !== id);
@@ -377,10 +463,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
         transactions.unshift(transaction); // Add to top of history
         
+        let stockDeductionMsg = [];
+        let deductedBeans = {};
+
+        // Deduct Inventory & Build Log
+        cart.forEach(item => {
+            const targetBeanId = getBeanId(item);
+            if (targetBeanId && item.grams > 0) {
+                const gramsToDeduct = item.grams * item.qty;
+                inventoryData[targetBeanId].stock -= gramsToDeduct;
+                
+                // Group deductions by bean for the notification
+                if (!deductedBeans[targetBeanId]) {
+                    deductedBeans[targetBeanId] = 0;
+                }
+                deductedBeans[targetBeanId] += gramsToDeduct;
+            }
+        });
+        
+        for (const beanId in deductedBeans) {
+            const totalGrams = deductedBeans[beanId];
+            const remainingKg = (inventoryData[beanId].stock / 1000).toFixed(2);
+            const beanName = inventoryData[beanId].name;
+            
+            // Add to Inventory Log
+            inventoryLogs.unshift({
+                date: now.toLocaleString('id-ID'),
+                beanName: beanName,
+                deduction: totalGrams + " gr",
+                remaining: remainingKg,
+                trxId: randomId
+            });
+            
+            stockDeductionMsg.push(`${beanName} berkurang ${totalGrams}gr (Sisa: ${remainingKg} Kg)`);
+        }
+
+        if (stockDeductionMsg.length > 0) {
+            showToast("Transaksi Berhasil!", stockDeductionMsg.join(' • '));
+        } else {
+            showToast("Transaksi Berhasil!", "Pesanan tidak mengandung bahan kopi.");
+        }
+
         // Hide payment modal, clear cart, open receipt
         paymentModal.classList.add('hidden');
         cart = [];
         renderCart();
+        renderProducts(products); // Refresh the UI stocks
+        renderInventory(); // update inventory view if open
         
         showReceipt(transaction);
     }
@@ -446,5 +575,66 @@ document.addEventListener('DOMContentLoaded', () => {
     window.app.showReceiptId = (id) => {
         const trx = transactions.find(t => t.id === id);
         if(trx) showReceipt(trx);
+    };
+
+    // --- INVENTORY VIEW LOGIC ---
+    function renderInventory() {
+        if (!inventoryGrid || !inventoryLogsBody) return;
+        inventoryGrid.innerHTML = '';
+        
+        // Render Stock Cards
+        for (const key in inventoryData) {
+            const item = inventoryData[key];
+            const stockKg = (item.stock / 1000).toFixed(2);
+            const isCritical = item.stock < LOW_STOCK_THRESHOLD; // < 100Kg
+            
+            const card = document.createElement('div');
+            card.className = `inv-stock-card ${isCritical ? 'critical' : ''}`;
+            
+            let refillBadgeHtml = isCritical ? '<br><span class="refill-badge">Kopi sudah bisa di stok kembali</span>' : '';
+            
+            card.innerHTML = `
+                <h4>${item.name}</h4>
+                <div class="inv-stock-amount">${stockKg} Kg</div>
+                ${refillBadgeHtml}
+            `;
+            inventoryGrid.appendChild(card);
+        }
+
+        // Render Logs Table
+        inventoryLogsBody.innerHTML = '';
+        if (inventoryLogs.length === 0) {
+            inventoryLogsBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Belum ada log pergerakan stok.</td></tr>`;
+        } else {
+            inventoryLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${log.date}</td>
+                    <td><strong>${log.beanName}</strong></td>
+                    <td style="color:var(--danger)">-${log.deduction}</td>
+                    <td>${log.remaining}</td>
+                    <td><span class="history-id">${log.trxId}</span></td>
+                `;
+                inventoryLogsBody.appendChild(tr);
+            });
+        }
+    }
+
+    // --- TOAST NOTIFICATIONS ---
+    function showToast(title, message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <div class="toast-title">${title}</div>
+            <div class="toast-body">${message}</div>
+        `;
+        toastContainer.appendChild(toast);
+        
+        // Auto remove after animation ends (4.6s + buffer)
+        setTimeout(() => {
+            if (toastContainer.contains(toast)) {
+                toastContainer.removeChild(toast);
+            }
+        }, 5100);
     }
 });
