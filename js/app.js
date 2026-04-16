@@ -66,6 +66,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeBean = null;
     let selectedBrewMethod = null;
 
+    // --- AUTHENTICATION ---
+    const APP_PASSWORD = "serambigayo";
+    const loginOverlay = document.getElementById('login-overlay');
+    const loginPassword = document.getElementById('login-password');
+    const btnLogin = document.getElementById('btn-login');
+    const loginErrorMsg = document.getElementById('login-error-msg');
+
+    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+        loginOverlay.classList.add('hidden');
+    }
+
+    function attemptLogin() {
+        if (loginPassword.value === APP_PASSWORD) {
+            sessionStorage.setItem('isAuthenticated', 'true');
+            loginOverlay.style.opacity = '0';
+            setTimeout(() => loginOverlay.classList.add('hidden'), 500);
+        } else {
+            loginErrorMsg.classList.remove('hidden');
+        }
+    }
+
+    btnLogin.addEventListener('click', attemptLogin);
+    loginPassword.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') attemptLogin();
+    });
+
     // --- INITIALIZATION ---
     updateClock();
     setInterval(updateClock, 1000);

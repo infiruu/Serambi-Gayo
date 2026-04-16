@@ -6,11 +6,25 @@
     <title>Serambi Gayo - POS System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Login Overlay / Lock Screen -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-box">
+            <div class="login-logo"><i class="ri-cup-fill"></i></div>
+            <h2>Selamat Datang</h2>
+            <p>Aplikasi Kasir Serambi Gayo</p>
+            <div class="input-group">
+                <input type="password" id="login-password" placeholder="Masukkan Password (cth: kasir123)" autocomplete="off">
+                <button id="btn-login"><i class="ri-arrow-right-line"></i></button>
+            </div>
+            <p id="login-error-msg" class="login-error hidden">Katasandi salah, silakan coba lagi.</p>
+        </div>
+    </div>
+
     <div id="app-container">
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
