@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedBrewMethod = null;
 
     // --- AUTHENTICATION ---
-    const APP_PASSWORD = "serambigayo";
+    const APP_PASSWORD = "serambigayo123";
     const loginOverlay = document.getElementById('login-overlay');
     const loginPassword = document.getElementById('login-password');
     const btnLogin = document.getElementById('btn-login');
